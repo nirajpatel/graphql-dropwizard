@@ -2,6 +2,9 @@ package service;
 
 import api.Graphql;
 import database.dao.PersonDAO;
+import graphql.GraphQL;
+import graphql.schema.GraphQLSchema;
+import querytype.PersonQuery;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -11,15 +14,16 @@ import java.util.Map;
  */
 public class GraphqlService implements Graphql {
 
-    private PersonDAO personDAO;
-
     public GraphqlService (PersonDAO personDAO) {
-        this.personDAO = personDAO;
+        new PersonQuery(personDAO);
     }
 
     public Map<String, Object> graphqlRequest(HttpServletRequest request) {
         String requestPayload = ServiceUtil.getRequestPayload(request);
-        personDAO.findById(1);
-        return null;
+
+        GraphQLSchema schema = GraphQLSchema.newSchema()
+                .query(PersonQuery.queryType)
+                .build();
+        return (Map<String, Object>)new GraphQL(schema).execute(requestPayload).getData();
     }
 }
