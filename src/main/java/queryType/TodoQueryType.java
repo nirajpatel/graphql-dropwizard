@@ -1,4 +1,4 @@
-package queryType;
+package querytype;
 
 import graphql.schema.GraphQLObjectType;
 

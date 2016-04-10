@@ -16,37 +16,9 @@ import java.util.Map;
  */
 public class DummyService implements DummyApi {
     public Map<String, Object> getSomething(HttpServletRequest request) {
-        String requestPayload = getRequestPayload(request);
+        String requestPayload = ServiceUtil.getRequestPayload(request);
         return HumanQuery.humanQueryTest(requestPayload);
-//        return "World";
     }
 
-    private String getRequestPayload(HttpServletRequest request) {
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
 
-        try {
-            InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            } else {
-                stringBuilder.append("");
-            }
-        } catch (IOException ex) {
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                }
-            }
-        }
-
-        return stringBuilder.toString();
-    }
 }
