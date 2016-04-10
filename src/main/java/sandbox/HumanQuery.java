@@ -3,6 +3,8 @@ package sandbox;
 import graphql.GraphQL;
 import graphql.schema.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static graphql.Scalars.GraphQLString;
@@ -17,36 +19,46 @@ public class HumanQuery {
     static Human luke;
     static Human han;
     public static void main(String[] args) {
+        String requestPayload = "{human(id:\"1000\") {name friends {name}}}";
+        humanQueryTest(requestPayload);
+    }
+
+    public static Map<String, Object> humanQueryTest(String requestPayload) {
         setUpHumanData();
-        GraphQLObjectType queryType = newObject()
-                .name("QueryType")
-                .field(newFieldDefinition()
-                        .name("human")
-                        .type(humanType)
-                        .argument(newArgument() // defines what will be passed to human object
-                                .name("id")
-                                .description("id of the human")
-                                .type(new GraphQLNonNull(GraphQLString))
-                                .build())
-                        // dataFetcher defines how data will be retrieved. Main logic suppose to be done here based on arguments.
-                        // like joining tables. Or can directly return a result set of a SQL.
-                        // FIXME: Separate to a single method
-                        // TODO: Add friends matching, will need to use list for it. Still pending on how to do so
-                        .dataFetcher(new DataFetcher() {
-                            public Object get(DataFetchingEnvironment environment) {
-                                return luke;
-                            }
-                        })
-                        .build())
-                .build();
+        GraphQLObjectType queryType = getHumanQueryType();
 
         GraphQLSchema schema = GraphQLSchema.newSchema()
                 .query(queryType)
                 .build();
-        Map<String, Object> result = (Map<String, Object>)new GraphQL(schema).execute(
-                "{human(id:\"1000\") {name}}"
+        Map<String, Object> result = (Map<String, Object>)new GraphQL(schema).execute(requestPayload
+                //"{human(id:\"1000\") {name friends {name}}}"
         ).getData();
         System.out.println(result);
+        return result;
+    }
+
+    private static GraphQLObjectType getHumanQueryType() {
+        return newObject()
+                    .name("QueryType")
+                    .field(newFieldDefinition()
+                            .name("human")
+                            .type(humanType)
+                            .argument(newArgument() // defines what will be passed to human object
+                                    .name("id")
+                                    .description("id of the human")
+                                    .type(new GraphQLNonNull(GraphQLString))
+                                    .build())
+                            // dataFetcher defines how data will be retrieved. Main logic suppose to be done here based on arguments.
+                            // like joining tables. Or can directly return a result set of a SQL.
+                            // FIXME: Separate to a single method
+                            // TODO: Add friends matching, will need to use list for it. Still pending on how to do so
+                            .dataFetcher(new DataFetcher() {
+                                public Object get(DataFetchingEnvironment environment) {
+                                    return luke;
+                                }
+                            })
+                            .build())
+                    .build();
     }
 
     public static GraphQLObjectType humanType = newObject()
@@ -77,7 +89,7 @@ public class HumanQuery {
         luke = new Human();
         luke.setId(1000);
         luke.setName("Luke Skywalker");
-        luke.setFriends(han);
+        luke.setFriends(Collections.singletonList(han));
     }
 }
 

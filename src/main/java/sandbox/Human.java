@@ -1,12 +1,14 @@
 package sandbox;
 
+import java.util.List;
+
 /**
  * Created by Shanshan Jiang on 4/9/2016.
  */
 public class Human {
     int id;
     String name;
-    Human friends;
+    List<Human> friends;
 
     // Getters are reflectively called by GraphQL lib
     public int getId() {
@@ -25,11 +27,11 @@ public class Human {
         this.name = name;
     }
 
-    public Human getFriends() {
+    public List getFriends() {
         return friends;
     }
 
-    public void setFriends(Human friends) {
+    public void setFriends(List<Human> friends) {
         this.friends = friends;
     }
 }
