@@ -26,16 +26,12 @@ public class PersonQuery {
     }
 
     private static List<GraphQLArgument> argumentList = FastList.newListWith(
-            newArgument()
-                    .name("id")
-                    .description("id of the person")
-                    .type(GraphQLInt)
-                    .build(),
-            newArgument()
-                    .name("object_id")
-                    .description("object_id of the person")
-                    .type(GraphQLString)
-                    .build()
+            newArgument().name("id").description("id of the person").type(GraphQLInt).build(),
+            newArgument().name("object_id").description("object_id of the person").type(GraphQLString).build(),
+            newArgument().name("first_name").type(GraphQLString).build(),
+            newArgument().name("last_name").type(GraphQLString).build(),
+            newArgument().name("birthplace").type(GraphQLString).build(),
+            newArgument().name("affiliation_name").type(GraphQLString).build()
     );
 
     private static DataFetcher fetchPersonData = new DataFetcher() {

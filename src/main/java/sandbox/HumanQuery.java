@@ -48,10 +48,6 @@ public class HumanQuery {
                                     .description("id of the human")
                                     .type(new GraphQLNonNull(GraphQLString))
                                     .build())
-                            // dataFetcher defines how data will be retrieved. Main logic suppose to be done here based on arguments.
-                            // like joining tables. Or can directly return a result set of a SQL.
-                            // FIXME: Separate to a single method
-                            // TODO: Add friends matching, will need to use list for it. Still pending on how to do so
                             .dataFetcher(new DataFetcher() {
                                 public Object get(DataFetchingEnvironment environment) {
                                     return luke;

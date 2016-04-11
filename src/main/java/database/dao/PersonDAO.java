@@ -2,8 +2,9 @@ package database.dao;
 
 import database.entity.Person;
 import io.dropwizard.hibernate.AbstractDAO;
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +23,14 @@ public class PersonDAO extends AbstractDAO<Person> {
     }
 
     public List<Person> findTop10() {
-        Query query = currentSession().createQuery("from database.entity.Person");
-        query.setMaxResults(10);
-        return query.list();
+        Criteria criteria = currentSession().createCriteria(Person.class);
+        criteria.setMaxResults(10);
+        return criteria.list();
+    }
+
+    public Optional<List<Person>> findByStringValue(List<String> fields, List<String> values) {
+        Criteria criteria = currentSession().createCriteria(Person.class);
+        return null;
+//        return Optional.ofNullable((List<Person>) criteria.add( Restrictions.eq(field, value) ).list());
     }
 }

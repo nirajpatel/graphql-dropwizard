@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class GraphqlService implements Graphql {
 
-    public GraphqlService (PersonDAO personDAO) {
+    public GraphqlService(PersonDAO personDAO) {
         new PersonQuery(personDAO);
     }
 
@@ -24,6 +24,6 @@ public class GraphqlService implements Graphql {
         GraphQLSchema schema = GraphQLSchema.newSchema()
                 .query(PersonQuery.queryType)
                 .build();
-        return (Map<String, Object>)new GraphQL(schema).execute(requestPayload).getData();
+        return (Map<String, Object>) new GraphQL(schema).execute(requestPayload).getData();
     }
 }
