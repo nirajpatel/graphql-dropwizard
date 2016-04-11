@@ -3,7 +3,6 @@ package sandbox;
 import graphql.GraphQL;
 import graphql.schema.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import static graphql.schema.GraphQLObjectType.newObject;
 public class HumanQuery {
     static Human luke;
     static Human han;
+
     public static void main(String[] args) {
         String requestPayload = "{human(id:\"1000\") {name friends {name}}}";
         humanQueryTest(requestPayload);
@@ -30,8 +30,7 @@ public class HumanQuery {
         GraphQLSchema schema = GraphQLSchema.newSchema()
                 .query(queryType)
                 .build();
-        Map<String, Object> result = (Map<String, Object>)new GraphQL(schema).execute(requestPayload
-                //"{human(id:\"1000\") {name friends {name}}}"
+        Map<String, Object> result = (Map<String, Object>) new GraphQL(schema).execute(requestPayload
         ).getData();
         System.out.println(result);
         return result;
@@ -39,22 +38,22 @@ public class HumanQuery {
 
     private static GraphQLObjectType getHumanQueryType() {
         return newObject()
-                    .name("QueryType")
-                    .field(newFieldDefinition()
-                            .name("human")
-                            .type(humanType)
-                            .argument(newArgument() // defines what will be passed to human object
-                                    .name("id")
-                                    .description("id of the human")
-                                    .type(new GraphQLNonNull(GraphQLString))
-                                    .build())
-                            .dataFetcher(new DataFetcher() {
-                                public Object get(DataFetchingEnvironment environment) {
-                                    return luke;
-                                }
-                            })
-                            .build())
-                    .build();
+                .name("QueryType")
+                .field(newFieldDefinition()
+                        .name("human")
+                        .type(humanType)
+                        .argument(newArgument() // defines what will be passed to human object
+                                .name("id")
+                                .description("id of the human")
+                                .type(new GraphQLNonNull(GraphQLString))
+                                .build())
+                        .dataFetcher(new DataFetcher() {
+                            public Object get(DataFetchingEnvironment environment) {
+                                return luke;
+                            }
+                        })
+                        .build())
+                .build();
     }
 
     public static GraphQLObjectType humanType = newObject()
