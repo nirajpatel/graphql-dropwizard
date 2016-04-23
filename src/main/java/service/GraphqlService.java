@@ -4,7 +4,9 @@ import api.GraphqlApi;
 import database.dao.PersonDAO;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
+import querytype.DegreeQuery;
 import querytype.PersonQuery;
+import querytype.Query;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -14,16 +16,12 @@ import java.util.Map;
  */
 public class GraphqlService implements GraphqlApi {
 
-    public GraphqlService(PersonDAO personDAO) {
-        new PersonQuery(personDAO);
-    }
-
     public Map<String, Object> graphqlRequest(HttpServletRequest request) {
         String requestPayload = ServiceUtil.getRequestPayload(request);
 
-        GraphQLSchema schema = GraphQLSchema.newSchema()
-                .query(PersonQuery.queryType)
+        GraphQLSchema personSchema = GraphQLSchema.newSchema()
+                .query(Query.queryType)
                 .build();
-        return (Map<String, Object>) new GraphQL(schema).execute(requestPayload).getData();
+        return (Map<String, Object>) new GraphQL(personSchema).execute(requestPayload).getData();
     }
 }

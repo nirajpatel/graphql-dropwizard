@@ -5,7 +5,6 @@ import database.dao.PersonDAO;
 import database.entity.Person;
 import graphql.schema.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,32 +20,34 @@ import static graphql.schema.GraphQLObjectType.newObject;
 public class PersonQuery {
 
     private static PersonDAO personDAO;
+    private static DegreeQuery degreeQuery;
 
     public PersonQuery(PersonDAO personDAO) {
         PersonQuery.personDAO = personDAO;
     }
 
-    private static List<GraphQLArgument> argumentList = FastList.newListWith(
+    static List<GraphQLArgument> argumentList = FastList.newListWith(
             newArgument().name("id").description("id of the person").type(new GraphQLList(GraphQLInt)).build(),
-            newArgument().name("object_id").description("object_id of the person").type(GraphQLString).build(),
+            newArgument().name("object_id").description("object_id of the person").type(new GraphQLList(GraphQLString)).build(),
             newArgument().name("first_name").type(GraphQLString).build(),
             newArgument().name("last_name").type(GraphQLString).build(),
             newArgument().name("birthplace").type(GraphQLString).build(),
             newArgument().name("affiliation_name").type(GraphQLString).build()
     );
 
-    private static DataFetcher fetchPersonData = new DataFetcher() {
+    static DataFetcher fetchPersonData = new DataFetcher() {
         public Object get(DataFetchingEnvironment environment) {
-            //FIXME: just for testing purpose
-            List<Person> people = new LinkedList<Person>();
+            //TODO: What if these 2 ids come at the same time in schema?
+            List<Person> people = new LinkedList<>();
             if (environment.getArguments().get("object_id") != null) {
-                // do some find here
+                Object ids = environment.getArguments().get("object_id");
+                if (ids instanceof List) {
+                    people.addAll(personDAO.findByStringValues("object_id", (List<String>) ids));
+                }
             } else if (environment.getArguments().get("id") != null) {
                 Object ids = environment.getArguments().get("id");
-                if (ids instanceof Integer) {
-                    people.add(personDAO.findById((Integer) ids).get());
-                } else if (ids instanceof ArrayList) {
-                    people.addAll(personDAO.findByIds((ArrayList<Integer>) ids));
+                if (ids instanceof List) {
+                    people.addAll(personDAO.findByIntegerValues("id", (List<Integer>) ids));
                 }
             } else {
                 people.addAll(personDAO.findTop10());
@@ -55,7 +56,7 @@ public class PersonQuery {
         }
     };
 
-    private static GraphQLObjectType personType = newObject()
+    static GraphQLObjectType personType = newObject()
             .name("Person")
             .description("Information related to a person")
             .field(newFieldDefinition().name("id").type(GraphQLInt).build())
@@ -64,15 +65,11 @@ public class PersonQuery {
             .field(newFieldDefinition().name("last_name").type(GraphQLString).build())
             .field(newFieldDefinition().name("birthplace").type(GraphQLString).build())
             .field(newFieldDefinition().name("affiliation_name").type(GraphQLString).build())
-            .build();
-
-    public static GraphQLObjectType queryType = newObject()
-            .name("QueryType")
             .field(newFieldDefinition()
-                    .name("person")
-                    .type(new GraphQLList(personType))
-                    .argument(argumentList)
-                    .dataFetcher(fetchPersonData)
+                    .name("degree")
+                    .description("The degree of the person, or an empty list if no record found.")
+                    .type(new GraphQLList(DegreeQuery.degreeType))
+                    .dataFetcher(DegreeQuery.fetchDegreeData)
                     .build())
             .build();
 }

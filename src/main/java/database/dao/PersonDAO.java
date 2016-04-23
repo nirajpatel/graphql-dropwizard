@@ -6,7 +6,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,20 +22,27 @@ public class PersonDAO extends AbstractDAO<Person> {
         return Optional.ofNullable(get(id));
     }
 
-    public List<Person> findTop10() {
+    public List findTop10() {
         Criteria criteria = currentSession().createCriteria(Person.class);
         criteria.setMaxResults(10);
         return criteria.list();
     }
 
-    public Optional<List<Person>> findByStringValue(List<String> fields, List<String> values) {
-//        Criteria criteria = currentSession().createCriteria(Person.class);
-        return null;
+    public List findByIntegerValues(String field, List<Integer> values) {
+        Criteria criteria = currentSession().createCriteria(Person.class);
+        criteria.add(Restrictions.in(field, values));
+        return criteria.list();
     }
 
-    public List<Person> findByIds(ArrayList<Integer> ids) {
+    public List findByIntegerValue(String field, Integer value) {
         Criteria criteria = currentSession().createCriteria(Person.class);
-        criteria.add(Restrictions.in("id", ids));
+        criteria.add(Restrictions.eq(field, value));
+        return criteria.list();
+    }
+
+    public List findByStringValues(String field, List<String> values) {
+        Criteria criteria = currentSession().createCriteria(Person.class);
+        criteria.add(Restrictions.in(field, values));
         return criteria.list();
     }
 }
