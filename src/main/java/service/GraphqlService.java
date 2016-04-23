@@ -1,6 +1,6 @@
 package service;
 
-import api.Graphql;
+import api.GraphqlApi;
 import database.dao.PersonDAO;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Shanshan Jiang on 4/10/2016.
  */
-public class GraphqlService implements Graphql {
+public class GraphqlService implements GraphqlApi {
 
     public GraphqlService(PersonDAO personDAO) {
         new PersonQuery(personDAO);

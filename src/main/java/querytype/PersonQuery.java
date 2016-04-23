@@ -5,6 +5,7 @@ import database.dao.PersonDAO;
 import database.entity.Person;
 import graphql.schema.*;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,12 +22,12 @@ public class PersonQuery {
 
     private static PersonDAO personDAO;
 
-    public PersonQuery (PersonDAO personDAO) {
+    public PersonQuery(PersonDAO personDAO) {
         PersonQuery.personDAO = personDAO;
     }
 
     private static List<GraphQLArgument> argumentList = FastList.newListWith(
-            newArgument().name("id").description("id of the person").type(GraphQLInt).build(),
+            newArgument().name("id").description("id of the person").type(new GraphQLList(GraphQLInt)).build(),
             newArgument().name("object_id").description("object_id of the person").type(GraphQLString).build(),
             newArgument().name("first_name").type(GraphQLString).build(),
             newArgument().name("last_name").type(GraphQLString).build(),
@@ -38,11 +39,15 @@ public class PersonQuery {
         public Object get(DataFetchingEnvironment environment) {
             //FIXME: just for testing purpose
             List<Person> people = new LinkedList<Person>();
-            if(environment.getArguments().get("object_id") != null) {
+            if (environment.getArguments().get("object_id") != null) {
                 // do some find here
-            } else if(environment.getArguments().get("id") != null) {
-                int id = (Integer) environment.getArguments().get("id");
-                people.add(personDAO.findById(id).get());
+            } else if (environment.getArguments().get("id") != null) {
+                Object ids = environment.getArguments().get("id");
+                if (ids instanceof Integer) {
+                    people.add(personDAO.findById((Integer) ids).get());
+                } else if (ids instanceof ArrayList) {
+                    people.addAll(personDAO.findByIds((ArrayList<Integer>) ids));
+                }
             } else {
                 people.addAll(personDAO.findTop10());
             }

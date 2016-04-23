@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by Shanshan Jiang on 4/10/2016.
  */
 @Path("/graphql")
-public interface Graphql {
+public interface GraphqlApi {
     @POST
     @UnitOfWork//indicates this a database related request
     @Consumes("text/plain")
