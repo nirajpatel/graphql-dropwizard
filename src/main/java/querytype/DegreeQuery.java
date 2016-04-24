@@ -1,8 +1,7 @@
 package querytype;
 
-import com.gs.collections.impl.list.mutable.ArrayListAdapter;
 import com.gs.collections.impl.list.mutable.FastList;
-import database.dao.DegreeDAO;
+import database.dao.DAO;
 import database.entity.Degree;
 import database.entity.Person;
 import graphql.schema.*;
@@ -20,10 +19,10 @@ import static graphql.schema.GraphQLObjectType.newObject;
  * Created by Shanshan Jiang on 4/23/2016.
  */
 public class DegreeQuery {
-    private static DegreeDAO degreeDAO;
+    private static DAO dao;
 
-    public DegreeQuery(DegreeDAO degreeDAO) {
-        DegreeQuery.degreeDAO = degreeDAO;
+    public DegreeQuery(DAO dao) {
+        DegreeQuery.dao = dao;
     }
 
     private static List<GraphQLArgument> argumentList = FastList.newListWith(
@@ -53,9 +52,8 @@ public class DegreeQuery {
             List<Degree> degrees = new LinkedList<>();
             if (environment.getSource() != null) {
                 Person person = (Person) environment.getSource();
-//                Object ids = environment.getArguments().get("object_id");
                 String id = person.getObject_id();
-                degrees.addAll(degreeDAO.findByStringValues("object_id", FastList.newListWith(id)));
+                degrees.addAll(dao.findByStringValues(Degree.class, "object_id", FastList.newListWith(id)));
             }
             return degrees;
         }

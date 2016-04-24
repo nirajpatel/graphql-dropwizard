@@ -1,7 +1,7 @@
 package querytype;
 
 import com.gs.collections.impl.list.mutable.FastList;
-import database.dao.PersonDAO;
+import database.dao.DAO;
 import database.entity.Person;
 import graphql.schema.*;
 
@@ -19,11 +19,10 @@ import static graphql.schema.GraphQLObjectType.newObject;
  */
 public class PersonQuery {
 
-    private static PersonDAO personDAO;
-    private static DegreeQuery degreeQuery;
+    private static DAO dao;
 
-    public PersonQuery(PersonDAO personDAO) {
-        PersonQuery.personDAO = personDAO;
+    public PersonQuery(DAO dao) {
+        PersonQuery.dao = dao;
     }
 
     static List<GraphQLArgument> argumentList = FastList.newListWith(
@@ -42,15 +41,15 @@ public class PersonQuery {
             if (environment.getArguments().get("object_id") != null) {
                 Object ids = environment.getArguments().get("object_id");
                 if (ids instanceof List) {
-                    people.addAll(personDAO.findByStringValues("object_id", (List<String>) ids));
+                    people.addAll(dao.findByStringValues(Person.class, "object_id", (List<String>) ids));
                 }
             } else if (environment.getArguments().get("id") != null) {
                 Object ids = environment.getArguments().get("id");
                 if (ids instanceof List) {
-                    people.addAll(personDAO.findByIntegerValues("id", (List<Integer>) ids));
+                    people.addAll(dao.findByIntegerValues(Person.class, "id", (List<Integer>) ids));
                 }
             } else {
-                people.addAll(personDAO.findTop10());
+                people.addAll(dao.findTopRecords(Person.class, 10));
             }
             return people;
         }

@@ -1,11 +1,8 @@
 package service;
 
 import api.GraphqlApi;
-import database.dao.PersonDAO;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
-import querytype.DegreeQuery;
-import querytype.PersonQuery;
 import querytype.Query;
 
 import javax.servlet.http.HttpServletRequest;
