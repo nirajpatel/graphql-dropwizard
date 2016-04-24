@@ -21,13 +21,7 @@ public class QueryFactory {
         queryList.stream().forEach(clazz -> {
             try {
                 clazz.getConstructor(DAO.class).newInstance(dao);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         });
